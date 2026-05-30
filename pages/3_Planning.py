@@ -116,35 +116,105 @@ elif planning_action == "Embedded Data Action":
         st.success("Data Action Saved")
 
 elif planning_action == "Cross Model":
-    target_models = [x for x in model_names if x != selected_model]
+
+    target_models = [
+        m for m in model_names
+        if m != selected_model
+    ]
 
     if not target_models:
         st.warning("At least two models are required.")
-    else:
-        target_model = st.selectbox("Target Model", target_models)
-        second_model = load_model(target_model)
+        st.stop()
 
-        second_df = second_model["data"]
-        if not isinstance(second_df, pd.DataFrame):
-            second_df = pd.DataFrame(second_df)
+    target_model_name = st.selectbox(
+        "Target Model",
+        target_models
+    )
 
-        common_cols = list(set(df.columns) & set(second_df.columns))
+    target_model = load_model(target_model_name)
 
-        if common_cols:
-            join_col = st.selectbox("Join Column", common_cols)
+    source_df = df.copy()
 
-            if st.button("Run Cross Model"):
-                merged = pd.merge(df, second_df, on=join_col, how="left")
+    target_df = target_model["data"]
 
-                st.dataframe(merged, use_container_width=True)
+    if not isinstance(target_df, pd.DataFrame):
+        target_df = pd.DataFrame(target_df)
 
-                save_planning(
-                    "Cross_Model",
-                    {"type": "Cross Model", "data": merged.to_dict("records")}
-                )
-                st.success("Cross Model Saved")
-        else:
-            st.error("No common columns found.")
+    # Find Common Dimensions
+    common_dimensions = list(
+        set(source_df.columns).intersection(
+            set(target_df.columns)
+        )
+    )
+
+    if not common_dimensions:
+        st.error("No common dimensions found between models.")
+        st.stop()
+
+    join_dimension = st.selectbox(
+        "Join Dimension",
+        common_dimensions
+    )
+
+    source_measure = st.selectbox(
+        "Source Measure",
+        measures
+    )
+
+    target_measure = st.text_input(
+        "Target Measure Name",
+        f"{source_measure}_FROM_{selected_model}"
+    )
+
+    st.subheader("Preview")
+
+    st.write("Source Model Rows:", len(source_df))
+    st.write("Target Model Rows:", len(target_df))
+
+    if st.button("Run Cross Model"):
+
+        result = target_df.copy()
+
+        lookup = source_df[
+            [join_dimension, source_measure]
+        ].drop_duplicates()
+
+        result = result.merge(
+            lookup,
+            on=join_dimension,
+            how="left"
+        )
+
+        result.rename(
+            columns={
+                source_measure: target_measure
+            },
+            inplace=True
+        )
+
+        st.success(
+            f"Measure '{source_measure}' transferred from "
+            f"'{selected_model}' to '{target_model_name}'"
+        )
+
+        st.dataframe(
+            result,
+            use_container_width=True
+        )
+
+        save_planning(
+            f"Cross_Model_{selected_model}_{target_model_name}",
+            {
+                "type": "Cross Model",
+                "source_model": selected_model,
+                "target_model": target_model_name,
+                "join_dimension": join_dimension,
+                "measure": source_measure,
+                "data": result.to_dict("records")
+            }
+        )
+
+        st.success("Cross Model Saved")
 
 elif planning_action == "Version Management":
     source_version = st.text_input("Source Version", "Actual")
