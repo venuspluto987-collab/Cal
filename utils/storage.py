@@ -148,3 +148,104 @@ def get_planning():
 
         if file.endswith(".json")
     ]
+# ==========================
+# LOAD ALL MODELS
+# ==========================
+
+def load_models():
+
+    models = {}
+
+    for model_name in get_models():
+
+        try:
+            models[model_name] = load_model(
+                model_name
+            )
+
+        except Exception:
+            pass
+
+    return models
+
+
+# ==========================
+# LOAD STORY OBJECTS
+# ==========================
+
+def load_story_objects():
+
+    os.makedirs(
+        STORY_PATH,
+        exist_ok=True
+    )
+
+    stories = {}
+
+    for file in os.listdir(
+        STORY_PATH
+    ):
+
+        if file.endswith(".json"):
+
+            name = file.replace(
+                ".json",
+                ""
+            )
+
+            try:
+
+                with open(
+                    f"{STORY_PATH}/{file}",
+                    "r"
+                ) as f:
+
+                    stories[name] = json.load(
+                        f
+                    )
+
+            except Exception:
+                pass
+
+    return stories
+
+
+# ==========================
+# LOAD PLANNING OBJECTS
+# ==========================
+
+def load_planning_objects():
+
+    os.makedirs(
+        PLANNING_PATH,
+        exist_ok=True
+    )
+
+    planning = {}
+
+    for file in os.listdir(
+        PLANNING_PATH
+    ):
+
+        if file.endswith(".json"):
+
+            name = file.replace(
+                ".json",
+                ""
+            )
+
+            try:
+
+                with open(
+                    f"{PLANNING_PATH}/{file}",
+                    "r"
+                ) as f:
+
+                    planning[name] = json.load(
+                        f
+                    )
+
+            except Exception:
+                pass
+
+    return planning
