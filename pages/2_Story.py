@@ -16,35 +16,43 @@ st.title("📊 Story")
 
 models = get_models()
 
-if len(models) == 0:
-
-    st.warning(
-        "No Saved Models Found"
-    )
-
+if not models:
+    st.warning("No Saved Models Found")
     st.stop()
 
 selected_model = st.selectbox(
     "Select Model",
-    models
+    models,
+    key="selected_model"
 )
 
-model = load_model(
-    selected_model
-)
+model = load_model(selected_model)
+
+if model is None:
+    st.error("Unable to load model")
+    st.stop()
 
 df = model["data"]
 dimensions = model["dimensions"]
 
-# include calculated measures too
+# Include calculated measures too
 measures = [
-
     c
-
     for c in df.columns
-
     if c not in dimensions
 ]
+
+# =====================================================
+# VALIDATION
+# =====================================================
+
+if len(dimensions) == 0:
+    st.error("No dimensions found in model.")
+    st.stop()
+
+if len(measures) == 0:
+    st.error("No measures found in model.")
+    st.stop()
 
 # =====================================================
 # KPI SECTION
@@ -52,51 +60,37 @@ measures = [
 
 st.subheader("KPI Dashboard")
 
-if len(measures) > 0:
+selected_kpi = st.selectbox(
+    "KPI Measure",
+    measures,
+    key="kpi_measure"
+)
 
-    selected_kpi = st.selectbox(
-        "KPI Measure",
-        measures,
-        key="kpi_measure"
+k1, k2, k3, k4 = st.columns(4)
+
+with k1:
+    st.metric(
+        "Total",
+        round(df[selected_kpi].sum(), 2)
     )
 
-    k1, k2, k3, k4 = st.columns(4)
+with k2:
+    st.metric(
+        "Average",
+        round(df[selected_kpi].mean(), 2)
+    )
 
-    with k1:
-        st.metric(
-            "Total",
-            round(
-                df[selected_kpi].sum(),
-                2
-            )
-        )
+with k3:
+    st.metric(
+        "Maximum",
+        round(df[selected_kpi].max(), 2)
+    )
 
-    with k2:
-        st.metric(
-            "Average",
-            round(
-                df[selected_kpi].mean(),
-                2
-            )
-        )
-
-    with k3:
-        st.metric(
-            "Maximum",
-            round(
-                df[selected_kpi].max(),
-                2
-            )
-        )
-
-    with k4:
-        st.metric(
-            "Minimum",
-            round(
-                df[selected_kpi].min(),
-                2
-            )
-        )
+with k4:
+    st.metric(
+        "Minimum",
+        round(df[selected_kpi].min(), 2)
+    )
 
 # =====================================================
 # FILTERS
@@ -108,32 +102,22 @@ st.subheader("Filters")
 
 filter_df = df.copy()
 
-if len(dimensions) > 0:
+filter_dimension = st.selectbox(
+    "Filter Dimension",
+    dimensions,
+    key="filter_dimension"
+)
 
-    filter_dimension = st.selectbox(
-        "Filter Dimension",
-        dimensions,
-        key="filter_dimension"
-    )
+values = st.multiselect(
+    "Select Values",
+    filter_df[filter_dimension].astype(str).unique(),
+    default=filter_df[filter_dimension].astype(str).unique(),
+    key="filter_values"
+)
 
-    values = st.multiselect(
-        "Select Values",
-        filter_df[
-            filter_dimension
-        ].astype(str).unique(),
-
-        default=filter_df[
-            filter_dimension
-        ].astype(str).unique(),
-
-        key="filter_values"
-    )
-
-    filter_df = filter_df[
-        filter_df[
-            filter_dimension
-        ].astype(str).isin(values)
-    ]
+filter_df = filter_df[
+    filter_df[filter_dimension].astype(str).isin(values)
+]
 
 # =====================================================
 # CHART BUILDER
@@ -146,7 +130,6 @@ st.subheader("Chart Builder")
 c1, c2, c3 = st.columns(3)
 
 with c1:
-
     x_axis = st.selectbox(
         "Dimension",
         dimensions,
@@ -154,7 +137,6 @@ with c1:
     )
 
 with c2:
-
     y_axis = st.selectbox(
         "Measure",
         measures,
@@ -162,7 +144,6 @@ with c2:
     )
 
 with c3:
-
     chart_type = st.selectbox(
         "Chart Type",
         [
@@ -221,9 +202,11 @@ elif chart_type == "Scatter":
         y=y_axis
     )
 
+# Main Chart
 st.plotly_chart(
     fig,
-    use_container_width=True
+    use_container_width=True,
+    key="main_chart"
 )
 
 # =====================================================
@@ -232,17 +215,17 @@ st.plotly_chart(
 
 chart_name = st.text_input(
     "Chart Name",
-    "Revenue_Chart"
+    "Revenue_Chart",
+    key="chart_name"
 )
 
 if st.button(
-    "💾 Save Chart"
+    "💾 Save Chart",
+    key="save_chart_btn"
 ):
 
     save_widget(
-
         chart_name,
-
         {
             "type": "chart",
             "chart_type": chart_type,
@@ -252,9 +235,7 @@ if st.button(
         }
     )
 
-    st.success(
-        "Chart Saved"
-    )
+    st.success("Chart Saved")
 
 # =====================================================
 # TABLE BUILDER
@@ -267,12 +248,11 @@ st.subheader("Table Builder")
 table_columns = st.multiselect(
     "Select Columns",
     df.columns.tolist(),
-    default=df.columns.tolist()
+    default=df.columns.tolist(),
+    key="table_columns"
 )
 
-table_df = filter_df[
-    table_columns
-]
+table_df = filter_df[table_columns]
 
 st.dataframe(
     table_df,
@@ -286,17 +266,17 @@ st.dataframe(
 
 table_name = st.text_input(
     "Table Name",
-    "Sales_Table"
+    "Sales_Table",
+    key="table_name"
 )
 
 if st.button(
-    "💾 Save Table"
+    "💾 Save Table",
+    key="save_table_btn"
 ):
 
     save_widget(
-
         table_name,
-
         {
             "type": "table",
             "columns": table_columns,
@@ -304,9 +284,7 @@ if st.button(
         }
     )
 
-    st.success(
-        "Table Saved"
-    )
+    st.success("Table Saved")
 
 # =====================================================
 # STORY PREVIEW
@@ -314,24 +292,22 @@ if st.button(
 
 st.divider()
 
-st.subheader(
-    "Story Preview"
-)
+st.subheader("Story Preview")
 
-left, right = st.columns(
-    [2, 1]
-)
+left, right = st.columns([2, 1])
 
 with left:
 
     st.plotly_chart(
         fig,
-        use_container_width=True
+        use_container_width=True,
+        key="preview_chart"
     )
 
 with right:
 
     st.dataframe(
         table_df.head(10),
-        use_container_width=True
+        use_container_width=True,
+        height=300
     )
