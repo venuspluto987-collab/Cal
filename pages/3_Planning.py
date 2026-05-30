@@ -73,7 +73,6 @@ planning_action = st.selectbox(
 
 if planning_action == "Copy Action":
 
-```
 st.subheader("Copy Measure")
 
 source_measure = st.selectbox(
@@ -114,7 +113,7 @@ if st.button("Execute Copy"):
     )
 
     st.success("Copy Action Saved")
-```
+
 
 # =====================================================
 
@@ -124,7 +123,6 @@ if st.button("Execute Copy"):
 
 elif planning_action == "Allocation":
 
-```
 st.subheader("Allocation Data Action")
 
 driver = st.selectbox(
@@ -176,7 +174,7 @@ if st.button("Run Allocation"):
         )
 
         st.success("Allocation Saved")
-```
+
 
 # =====================================================
 
@@ -186,7 +184,7 @@ if st.button("Run Allocation"):
 
 elif planning_action == "Embedded Data Action":
 
-```
+
 st.subheader("Embedded Formula")
 
 measure1 = st.selectbox(
@@ -253,7 +251,7 @@ if st.button("Run Data Action"):
     )
 
     st.success("Data Action Saved")
-```
+
 
 # =====================================================
 
@@ -263,7 +261,7 @@ if st.button("Run Data Action"):
 
 elif planning_action == "Cross Model":
 
-```
+
 st.subheader("Cross Model")
 
 target_models = [
@@ -343,7 +341,6 @@ else:
         st.error(
             "No common columns found."
         )
-```
 
 # =====================================================
 
@@ -353,7 +350,6 @@ else:
 
 elif planning_action == "Version Management":
 
-```
 st.subheader("Version Copy")
 
 source_version = st.text_input(
@@ -408,7 +404,7 @@ if st.button("Create Version"):
     st.success(
         "Version Saved"
     )
-```
+
 
 # =====================================================
 
@@ -418,7 +414,6 @@ if st.button("Create Version"):
 
 elif planning_action == "Planning Grid":
 
-```
 st.subheader(
     "Editable Planning Grid"
 )
@@ -446,7 +441,7 @@ if st.button(
     st.success(
         "Planning Grid Saved"
     )
-```
+
 
 # =====================================================
 
@@ -456,7 +451,6 @@ if st.button(
 
 elif planning_action == "Planning Repository":
 
-```
 st.subheader(
     "Saved Planning Objects"
 )
@@ -481,4 +475,3 @@ else:
     st.info(
         "No Planning Objects Found"
     )
-```
