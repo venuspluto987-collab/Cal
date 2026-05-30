@@ -115,60 +115,36 @@ elif planning_action == "Embedded Data Action":
         )
         st.success("Data Action Saved")
 
-elif planning_type == "Cross Model":
-    uploaded_cross = st.file_uploader(
-        "Upload Another Model",
-        type=["csv", "xlsx"],
-        key="crossmodel"
-    )
+elif planning_action == "Cross Model":
+    target_models = [x for x in model_names if x != selected_model]
 
-    if uploaded_cross is not None:
-        try:
-            if uploaded_cross.name.endswith(".csv"):
-                cross_df = pd.read_csv(uploaded_cross)
-            else:
-                cross_df = pd.read_excel(uploaded_cross)
+    if not target_models:
+        st.warning("At least two models are required.")
+    else:
+        target_model = st.selectbox("Target Model", target_models)
+        second_model = load_model(target_model)
 
-            st.subheader("Cross Model Preview")
-            st.dataframe(
-                cross_df,
-                use_container_width=True
-            )
+        second_df = second_model["data"]
+        if not isinstance(second_df, pd.DataFrame):
+            second_df = pd.DataFrame(second_df)
 
-            common_columns = list(
-                set(df.columns) & set(cross_df.columns)
-            )
+        common_cols = list(set(df.columns) & set(second_df.columns))
 
-            if len(common_columns) > 0:
-                join_column = st.selectbox(
-                    "Join Column",
-                    common_columns
+        if common_cols:
+            join_col = st.selectbox("Join Column", common_cols)
+
+            if st.button("Run Cross Model"):
+                merged = pd.merge(df, second_df, on=join_col, how="left")
+
+                st.dataframe(merged, use_container_width=True)
+
+                save_planning(
+                    "Cross_Model",
+                    {"type": "Cross Model", "data": merged.to_dict("records")}
                 )
-
-                if st.button("Run Cross Model"):
-                    merged_df = pd.merge(
-                        df,
-                        cross_df,
-                        on=join_column,
-                        how="left"
-                    )
-
-                    st.success(
-                        "Cross Model Merge Completed"
-                    )
-
-                    st.dataframe(
-                        merged_df,
-                        use_container_width=True
-                    )
-
-            else:
-                st.warning(
-                    "No common columns found"
-                )
-
-        except Exception as e:
-            st.error(f"Error: {e}")
+                st.success("Cross Model Saved")
+        else:
+            st.error("No common columns found.")
 
 elif planning_action == "Version Management":
     source_version = st.text_input("Source Version", "Actual")
