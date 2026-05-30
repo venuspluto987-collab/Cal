@@ -114,107 +114,154 @@ elif planning_action == "Embedded Data Action":
             {"type": "Embedded Data Action", "data": result.to_dict("records")}
         )
         st.success("Data Action Saved")
-
 elif planning_action == "Cross Model":
 
-    target_models = [
-        m for m in model_names
-        if m != selected_model
-    ]
+    st.subheader("Cross Model Merge")
 
-    if not target_models:
-        st.warning("At least two models are required.")
-        st.stop()
-
-    target_model_name = st.selectbox(
-        "Target Model",
-        target_models
+    merge_option = st.radio(
+        "Target Source",
+        ["Existing Model", "Upload New Model"]
     )
 
-    target_model = load_model(target_model_name)
+    # -----------------------------------------
+    # LOAD SECOND MODEL
+    # -----------------------------------------
 
-    source_df = df.copy()
+    if merge_option == "Existing Model":
 
-    target_df = target_model["data"]
+        target_models = [
+            m for m in model_names
+            if m != selected_model
+        ]
 
-    if not isinstance(target_df, pd.DataFrame):
-        target_df = pd.DataFrame(target_df)
+        if not target_models:
+            st.warning("No additional models available")
+            st.stop()
 
-    # Find Common Dimensions
-    common_dimensions = list(
-        set(source_df.columns).intersection(
-            set(target_df.columns)
+        target_model_name = st.selectbox(
+            "Select Target Model",
+            target_models
+        )
+
+        target_model = load_model(target_model_name)
+
+        second_df = target_model["data"]
+
+        if not isinstance(second_df, pd.DataFrame):
+            second_df = pd.DataFrame(second_df)
+
+    else:
+
+        uploaded_file = st.file_uploader(
+            "Upload CSV",
+            type=["csv"]
+        )
+
+        if uploaded_file is not None:
+            second_df = pd.read_csv(uploaded_file)
+        else:
+            st.stop()
+
+    # -----------------------------------------
+    # DIMENSION MATCHING
+    # -----------------------------------------
+
+    common_columns = list(
+        set(df.columns).intersection(
+            set(second_df.columns)
         )
     )
 
-    if not common_dimensions:
-        st.error("No common dimensions found between models.")
+    if not common_columns:
+        st.error(
+            "No matching columns found between models"
+        )
         st.stop()
 
-    join_dimension = st.selectbox(
-        "Join Dimension",
-        common_dimensions
+    join_column = st.selectbox(
+        "Join Column",
+        common_columns
     )
 
-    source_measure = st.selectbox(
-        "Source Measure",
-        measures
+    join_type = st.selectbox(
+        "Join Type",
+        [
+            "left",
+            "right",
+            "inner",
+            "outer"
+        ]
     )
 
-    target_measure = st.text_input(
-        "Target Measure Name",
-        f"{source_measure}_FROM_{selected_model}"
+    st.write("Source Model")
+    st.dataframe(
+        df.head(),
+        use_container_width=True
     )
 
-    st.subheader("Preview")
+    st.write("Target Model")
+    st.dataframe(
+        second_df.head(),
+        use_container_width=True
+    )
 
-    st.write("Source Model Rows:", len(source_df))
-    st.write("Target Model Rows:", len(target_df))
+    # -----------------------------------------
+    # MERGE
+    # -----------------------------------------
 
-    if st.button("Run Cross Model"):
+    if st.button("Merge Models"):
 
-        result = target_df.copy()
-
-        lookup = source_df[
-            [join_dimension, source_measure]
-        ].drop_duplicates()
-
-        result = result.merge(
-            lookup,
-            on=join_dimension,
-            how="left"
-        )
-
-        result.rename(
-            columns={
-                source_measure: target_measure
-            },
-            inplace=True
+        merged_df = pd.merge(
+            df,
+            second_df,
+            on=join_column,
+            how=join_type,
+            suffixes=(
+                "_Source",
+                "_Target"
+            )
         )
 
         st.success(
-            f"Measure '{source_measure}' transferred from "
-            f"'{selected_model}' to '{target_model_name}'"
+            f"Merged {len(merged_df)} records"
         )
 
         st.dataframe(
-            result,
+            merged_df,
             use_container_width=True
         )
 
-        save_planning(
-            f"Cross_Model_{selected_model}_{target_model_name}",
-            {
-                "type": "Cross Model",
-                "source_model": selected_model,
-                "target_model": target_model_name,
-                "join_dimension": join_dimension,
-                "measure": source_measure,
-                "data": result.to_dict("records")
-            }
+        model_name = st.text_input(
+            "Save As Model",
+            f"{selected_model}_CrossModel"
         )
 
-        st.success("Cross Model Saved")
+        if st.button("Save Cross Model"):
+
+            save_planning(
+                model_name,
+                {
+                    "type": "Cross Model",
+                    "data": merged_df.to_dict(
+                        "records"
+                    ),
+                    "dimensions": list(
+                        merged_df.select_dtypes(
+                            exclude="number"
+                        ).columns
+                    ),
+                    "measures": list(
+                        merged_df.select_dtypes(
+                            include="number"
+                        ).columns
+                    )
+                }
+            )
+
+            st.success(
+                f"{model_name} saved successfully"
+            )
+
 
 elif planning_action == "Version Management":
     source_version = st.text_input("Source Version", "Actual")
