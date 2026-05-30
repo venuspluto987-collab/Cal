@@ -1,11 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-from utils.storage import (
-    load_models,
-    save_planning_object
-)
-
 st.set_page_config(
     page_title="Planning",
     layout="wide"
@@ -14,17 +9,30 @@ st.set_page_config(
 st.title("📈 Planning")
 
 # =====================================================
+# IMPORT STORAGE FUNCTIONS
+# =====================================================
+
+try:
+    from utils.storage import (
+        load_models,
+        save_planning_object
+    )
+except Exception as e:
+    st.error(f"Import Error: {e}")
+    st.stop()
+
+# =====================================================
 # LOAD MODELS
 # =====================================================
 
-models = load_models()
+try:
+    models = load_models()
+except Exception as e:
+    st.error(f"Model Load Error: {e}")
+    st.stop()
 
-if len(models) == 0:
-
-    st.warning(
-        "No Models Available"
-    )
-
+if not models:
+    st.warning("No Models Available")
     st.stop()
 
 # =====================================================
@@ -38,12 +46,10 @@ model_name = st.selectbox(
 
 model = models[model_name]
 
-df = pd.DataFrame(
-    model["data"]
-)
+df = pd.DataFrame(model["data"])
 
-measures = model["measures"]
-dimensions = model["dimensions"]
+measures = model.get("measures", [])
+dimensions = model.get("dimensions", [])
 
 # =====================================================
 # PLANNING ACTIONS
@@ -71,8 +77,7 @@ if planning_action == "Copy Model":
 
     source_measure = st.selectbox(
         "Source Measure",
-        measures,
-        key="copy_source"
+        measures
     )
 
     target_measure = st.text_input(
@@ -101,15 +106,13 @@ if planning_action == "Copy Model":
             use_container_width=True
         )
 
-        if st.button("Save Result"):
-
-            save_planning_object(
-                target_measure,
-                {
-                    "type": "copy_model",
-                    "data": result_df.to_dict("records")
-                }
-            )
+        save_planning_object(
+            target_measure,
+            {
+                "type": "copy_model",
+                "data": result_df.to_dict("records")
+            }
+        )
 
 # =====================================================
 # ALLOCATION
@@ -120,9 +123,8 @@ elif planning_action == "Allocation":
     st.subheader("Allocation")
 
     driver_measure = st.selectbox(
-        "Driver",
-        measures,
-        key="driver_measure"
+        "Driver Measure",
+        measures
     )
 
     allocation_amount = st.number_input(
@@ -131,7 +133,7 @@ elif planning_action == "Allocation":
     )
 
     target_column = st.text_input(
-        "Allocated Column",
+        "Target Column",
         "Allocated_Value"
     )
 
@@ -139,26 +141,26 @@ elif planning_action == "Allocation":
 
         result_df = df.copy()
 
-        total = result_df[
-            driver_measure
-        ].sum()
+        total_driver = result_df[driver_measure].sum()
 
-        result_df[target_column] = (
-            (
-                result_df[driver_measure]
-                / total
+        if total_driver == 0:
+            st.error("Driver total cannot be zero")
+        else:
+
+            result_df[target_column] = (
+                (
+                    result_df[driver_measure]
+                    / total_driver
+                )
+                * allocation_amount
+            ).round(2)
+
+            st.success("Allocation Complete")
+
+            st.dataframe(
+                result_df,
+                use_container_width=True
             )
-            * allocation_amount
-        ).round(2)
-
-        st.success("Allocation Complete")
-
-        st.dataframe(
-            result_df,
-            use_container_width=True
-        )
-
-        if st.button("Save Allocation"):
 
             save_planning_object(
                 target_column,
@@ -178,17 +180,12 @@ elif planning_action == "Fact Deletion":
 
     delete_measure = st.selectbox(
         "Measure",
-        measures,
-        key="delete_measure"
+        measures
     )
 
     condition = st.selectbox(
         "Condition",
-        [
-            "<",
-            ">",
-            "="
-        ]
+        ["<", ">", "="]
     )
 
     threshold = st.number_input(
@@ -201,31 +198,22 @@ elif planning_action == "Fact Deletion":
         result_df = df.copy()
 
         if condition == "<":
-
             result_df = result_df[
-                result_df[
-                    delete_measure
-                ] >= threshold
+                result_df[delete_measure] >= threshold
             ]
 
         elif condition == ">":
-
             result_df = result_df[
-                result_df[
-                    delete_measure
-                ] <= threshold
+                result_df[delete_measure] <= threshold
             ]
 
-        elif condition == "=":
-
+        else:
             result_df = result_df[
-                result_df[
-                    delete_measure
-                ] != threshold
+                result_df[delete_measure] != threshold
             ]
 
         st.success(
-            f"{len(df)-len(result_df)} rows removed"
+            f"{len(df) - len(result_df)} rows removed"
         )
 
         st.dataframe(
@@ -233,15 +221,13 @@ elif planning_action == "Fact Deletion":
             use_container_width=True
         )
 
-        if st.button("Save Deletion Result"):
-
-            save_planning_object(
-                "Fact_Deletion",
-                {
-                    "type": "fact_deletion",
-                    "data": result_df.to_dict("records")
-                }
-            )
+        save_planning_object(
+            "Fact_Deletion",
+            {
+                "type": "fact_deletion",
+                "data": result_df.to_dict("records")
+            }
+        )
 
 # =====================================================
 # CROSS MODEL
@@ -251,15 +237,20 @@ elif planning_action == "Cross Model":
 
     st.subheader("Cross Model Merge")
 
-    second_model = st.selectbox(
-        "Target Model",
-        [
-            x for x in models.keys()
-            if x != model_name
-        ]
-    )
+    other_models = [
+        x for x in models.keys()
+        if x != model_name
+    ]
 
-    if second_model:
+    if not other_models:
+        st.warning("No second model available")
+
+    else:
+
+        second_model = st.selectbox(
+            "Target Model",
+            other_models
+        )
 
         cross_df = pd.DataFrame(
             models[second_model]["data"]
@@ -267,11 +258,10 @@ elif planning_action == "Cross Model":
 
         common_cols = list(
             set(df.columns)
-            &
-            set(cross_df.columns)
+            & set(cross_df.columns)
         )
 
-        if len(common_cols) > 0:
+        if common_cols:
 
             join_column = st.selectbox(
                 "Join Column",
@@ -296,18 +286,15 @@ elif planning_action == "Cross Model":
                     use_container_width=True
                 )
 
-                if st.button("Save Cross Model"):
-
-                    save_planning_object(
-                        "Cross_Model",
-                        {
-                            "type": "cross_model",
-                            "data": merged_df.to_dict("records")
-                        }
-                    )
+                save_planning_object(
+                    "Cross_Model",
+                    {
+                        "type": "cross_model",
+                        "data": merged_df.to_dict("records")
+                    }
+                )
 
         else:
-
             st.error(
                 "No common columns found"
             )
@@ -330,7 +317,7 @@ elif planning_action == "Version Copy":
         "Budget"
     )
 
-    increase = st.number_input(
+    increase_pct = st.number_input(
         "Increase %",
         value=10.0
     )
@@ -348,23 +335,23 @@ elif planning_action == "Version Copy":
 
         version_df[version_measure] = (
             version_df[version_measure]
-            * (1 + increase/100)
+            * (1 + increase_pct / 100)
         ).round(2)
+
+        st.success("Version Created")
 
         st.dataframe(
             version_df,
             use_container_width=True
         )
 
-        if st.button("Save Version"):
-
-            save_planning_object(
-                target_version,
-                {
-                    "type": "version_copy",
-                    "data": version_df.to_dict("records")
-                }
-            )
+        save_planning_object(
+            target_version,
+            {
+                "type": "version_copy",
+                "data": version_df.to_dict("records")
+            }
+        )
 
 # =====================================================
 # EDITABLE PLANNING TABLE
@@ -372,9 +359,9 @@ elif planning_action == "Version Copy":
 
 elif planning_action == "Editable Planning Table":
 
-    st.subheader("Planning Grid")
+    st.subheader("Editable Planning Grid")
 
-    editable_df = st.data_editor(
+    edited_df = st.data_editor(
         df,
         use_container_width=True,
         num_rows="dynamic"
@@ -386,10 +373,10 @@ elif planning_action == "Editable Planning Table":
             "Editable_Planning",
             {
                 "type": "editable_table",
-                "data": editable_df.to_dict("records")
+                "data": edited_df.to_dict("records")
             }
         )
 
         st.success(
-            "Planning Data Saved"
+            "Planning Data Saved Successfully"
         )
