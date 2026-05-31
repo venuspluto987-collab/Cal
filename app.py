@@ -1,10 +1,8 @@
 import streamlit as st
+from ui import load_ui
 
-st.set_page_config(
-    page_title="SAC Analytics Cloud",
-    page_icon="📊",
-    layout="wide"
-)
+load_ui("SAC Analytics Cloud")
+
 
 try:
     with open("styles.css") as f:
