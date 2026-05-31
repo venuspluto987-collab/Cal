@@ -20,7 +20,7 @@ st.markdown("""
 
 Use the left navigation menu:
 
-- Model
+- 📊Model
 - Story
 - Planning
 - Story Builder
