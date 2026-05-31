@@ -7,11 +7,10 @@ from utils.storage import (
     load_story_objects,
     load_planning_objects
 )
+from ui import load_ui
 
-st.set_page_config(
-    page_title="Story Builder",
-    layout="wide"
-)
+load_ui("Story Builder")
+
 
 st.title("📖 Story Builder")
 
