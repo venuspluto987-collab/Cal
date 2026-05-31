@@ -1,188 +1,109 @@
 /* =====================================================
-   SAC STYLE THEME
-===================================================== */
-
-:root{
-    --sap-blue:#0a6ed1;
-    --sap-blue-dark:#0854a0;
-    --sap-bg:#f5f6f7;
-    --sap-card:#ffffff;
-    --sap-border:#d9d9d9;
-    --sap-text:#32363a;
-}
-
-/* =====================================================
-   APP BACKGROUND
+   SAP ANALYTICS CLOUD STYLE
 ===================================================== */
 
 .stApp{
-    background-color:var(--sap-bg);
+    background:#f5f6f7;
 }
 
-/* =====================================================
-   MAIN CONTENT
-===================================================== */
+/* TOP HEADER */
 
-.main{
-    background-color:var(--sap-bg);
+.sap-header{
+    height:60px;
+    background:#0a6ed1;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 25px;
+    margin:-1rem -1rem 1rem -1rem;
+    color:white;
 }
 
-/* =====================================================
-   SIDEBAR
-===================================================== */
+.sap-logo{
+    font-size:22px;
+    font-weight:700;
+}
+
+.sap-toolbar{
+    display:flex;
+    gap:30px;
+    font-size:14px;
+    font-weight:500;
+}
+
+.sap-toolbar span{
+    cursor:pointer;
+}
+
+/* SIDEBAR */
 
 [data-testid="stSidebar"]{
     background:#354a5f;
-    border-right:1px solid #4f667d;
 }
 
 [data-testid="stSidebar"] *{
     color:white !important;
 }
 
-[data-testid="stSidebar"] .stSelectbox label,
-[data-testid="stSidebar"] .stRadio label{
-    color:white !important;
-}
+/* MAIN CANVAS */
 
-/* =====================================================
-   HEADERS
-===================================================== */
-
-h1{
-    color:#32363a;
-    font-size:32px;
-    font-weight:600;
-    border-bottom:2px solid #e5e7eb;
-    padding-bottom:10px;
-}
-
-h2,h3{
-    color:#32363a;
-    font-weight:600;
-}
-
-/* =====================================================
-   CARDS
-===================================================== */
-
-div[data-testid="stVerticalBlock"] > div{
+.block-container{
+    background:white;
+    padding:25px;
     border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    margin-top:10px;
 }
 
-/* =====================================================
-   METRICS
-===================================================== */
+/* KPI CARDS */
 
 [data-testid="metric-container"]{
     background:white;
-    border:1px solid #d9d9d9;
-    padding:15px;
+    border-left:5px solid #0a6ed1;
     border-radius:8px;
-    box-shadow:0 1px 3px rgba(0,0,0,.05);
+    padding:15px;
+    box-shadow:0 1px 5px rgba(0,0,0,.08);
 }
 
-/* =====================================================
-   BUTTONS
-===================================================== */
+/* BUTTONS */
 
 .stButton button{
-    width:100%;
     background:#0a6ed1;
     color:white;
     border:none;
     border-radius:6px;
-    height:40px;
     font-weight:600;
+    width:100%;
 }
 
 .stButton button:hover{
     background:#0854a0;
-    color:white;
 }
 
-/* =====================================================
-   INPUTS
-===================================================== */
-
-.stTextInput input,
-.stNumberInput input,
-.stSelectbox div[data-baseweb="select"]{
-    border-radius:6px;
-    border:1px solid #c7c7c7;
-}
-
-/* =====================================================
-   DATAFRAME
-===================================================== */
+/* TABLES */
 
 [data-testid="stDataFrame"]{
     border:1px solid #d9d9d9;
     border-radius:8px;
     overflow:hidden;
-    background:white;
 }
 
-/* =====================================================
-   CHART AREA
-===================================================== */
+/* CHARTS */
 
 .js-plotly-plot{
-    background:white;
     border:1px solid #d9d9d9;
     border-radius:8px;
+    background:white;
     padding:10px;
 }
 
-/* =====================================================
-   TABS
-===================================================== */
+/* TITLES */
 
-.stTabs [role="tab"]{
-    background:white;
-    border-radius:6px;
-    margin-right:5px;
+h1{
+    color:#32363a;
+    font-weight:600;
 }
 
-.stTabs [aria-selected="true"]{
-    background:#0a6ed1;
-    color:white;
-}
-
-/* =====================================================
-   EXPANDER
-===================================================== */
-
-.streamlit-expanderHeader{
-    background:white;
-    border-radius:6px;
-    border:1px solid #d9d9d9;
-}
-
-/* =====================================================
-   DIVIDER
-===================================================== */
-
-hr{
-    border-top:1px solid #d9d9d9;
-}
-
-/* =====================================================
-   KPI TILE EFFECT
-===================================================== */
-
-[data-testid="metric-container"]:hover{
-    transform:translateY(-2px);
-    transition:0.2s;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-/* =====================================================
-   SAC PAGE PANEL LOOK
-===================================================== */
-
-.block-container{
-    padding-top:1rem;
-    padding-bottom:1rem;
-    max-width:100%;
+h2,h3{
+    color:#32363a;
 }
