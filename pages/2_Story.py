@@ -7,7 +7,9 @@ from utils.storage import (
     load_model,
     save_widget
 )
+from ui import load_ui
 
+load_ui("Story")
 st.title("📊 Story")
 
 # =====================================================
