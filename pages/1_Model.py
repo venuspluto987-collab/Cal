@@ -8,7 +8,9 @@ from utils.calculation_engine import (
 )
 
 st.set_page_config(layout="wide")
+from ui import load_ui
 
+load_ui("Model")
 st.title("📦 Model")
 
 # =====================================================
