@@ -8,7 +8,9 @@ from utils.storage import (
     get_planning
 )
 
-st.set_page_config(page_title="Planning", layout="wide")
+from ui import load_ui
+
+load_ui("Planning")
 st.title("📈 SAC Planning")
 
 # Load Models
