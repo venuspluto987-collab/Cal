@@ -1,20 +1,188 @@
-.main {
-    background:#f5f7fa;
+/* =====================================================
+   SAC STYLE THEME
+===================================================== */
+
+:root{
+    --sap-blue:#0a6ed1;
+    --sap-blue-dark:#0854a0;
+    --sap-bg:#f5f6f7;
+    --sap-card:#ffffff;
+    --sap-border:#d9d9d9;
+    --sap-text:#32363a;
 }
 
-.stButton button{
-    width:100%;
-    border-radius:8px;
+/* =====================================================
+   APP BACKGROUND
+===================================================== */
+
+.stApp{
+    background-color:var(--sap-bg);
 }
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.main{
+    background-color:var(--sap-bg);
+}
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
 
 [data-testid="stSidebar"]{
-    background:#0f172a;
+    background:#354a5f;
+    border-right:1px solid #4f667d;
 }
 
 [data-testid="stSidebar"] *{
+    color:white !important;
+}
+
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stRadio label{
+    color:white !important;
+}
+
+/* =====================================================
+   HEADERS
+===================================================== */
+
+h1{
+    color:#32363a;
+    font-size:32px;
+    font-weight:600;
+    border-bottom:2px solid #e5e7eb;
+    padding-bottom:10px;
+}
+
+h2,h3{
+    color:#32363a;
+    font-weight:600;
+}
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+div[data-testid="stVerticalBlock"] > div{
+    border-radius:10px;
+}
+
+/* =====================================================
+   METRICS
+===================================================== */
+
+[data-testid="metric-container"]{
+    background:white;
+    border:1px solid #d9d9d9;
+    padding:15px;
+    border-radius:8px;
+    box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.stButton button{
+    width:100%;
+    background:#0a6ed1;
+    color:white;
+    border:none;
+    border-radius:6px;
+    height:40px;
+    font-weight:600;
+}
+
+.stButton button:hover{
+    background:#0854a0;
     color:white;
 }
 
-h1{
-    color:#0f172a;
+/* =====================================================
+   INPUTS
+===================================================== */
+
+.stTextInput input,
+.stNumberInput input,
+.stSelectbox div[data-baseweb="select"]{
+    border-radius:6px;
+    border:1px solid #c7c7c7;
+}
+
+/* =====================================================
+   DATAFRAME
+===================================================== */
+
+[data-testid="stDataFrame"]{
+    border:1px solid #d9d9d9;
+    border-radius:8px;
+    overflow:hidden;
+    background:white;
+}
+
+/* =====================================================
+   CHART AREA
+===================================================== */
+
+.js-plotly-plot{
+    background:white;
+    border:1px solid #d9d9d9;
+    border-radius:8px;
+    padding:10px;
+}
+
+/* =====================================================
+   TABS
+===================================================== */
+
+.stTabs [role="tab"]{
+    background:white;
+    border-radius:6px;
+    margin-right:5px;
+}
+
+.stTabs [aria-selected="true"]{
+    background:#0a6ed1;
+    color:white;
+}
+
+/* =====================================================
+   EXPANDER
+===================================================== */
+
+.streamlit-expanderHeader{
+    background:white;
+    border-radius:6px;
+    border:1px solid #d9d9d9;
+}
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+
+hr{
+    border-top:1px solid #d9d9d9;
+}
+
+/* =====================================================
+   KPI TILE EFFECT
+===================================================== */
+
+[data-testid="metric-container"]:hover{
+    transform:translateY(-2px);
+    transition:0.2s;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+/* =====================================================
+   SAC PAGE PANEL LOOK
+===================================================== */
+
+.block-container{
+    padding-top:1rem;
+    padding-bottom:1rem;
+    max-width:100%;
 }
