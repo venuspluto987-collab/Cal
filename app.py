@@ -13,8 +13,25 @@ try:
 except:
     pass
 
-st.title("📊 SAC Analytics Cloud")
-
+st.markdown("""
+<div style="
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:20px;
+">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg"
+         width="90">
+    <h1 style="
+        margin:0;
+        color:#32363a;
+        font-size:38px;
+        font-weight:700;
+    ">
+        SAC Analytics Cloud
+    </h1>
+</div>
+""", unsafe_allow_html=True)
 st.markdown("""
 ### Available Modules
 
