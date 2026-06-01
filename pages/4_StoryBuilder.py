@@ -347,7 +347,7 @@ if len(numeric_cols) > 0:
 
 st.divider()
 
-dashboard_json = {
+dashboard_pdf = {
     "story_title": story_title,
     "layout": layout_type,
     "widgets": selected_widgets
