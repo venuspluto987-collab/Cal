@@ -5,7 +5,7 @@ def load_ui(page_title):
 
     st.set_page_config(
         page_title=page_title,
-        page_icon="assets/sap_logo.png",
+        page_icon="Screenshot 2026-05-28 212716.png",
         layout="wide"
     )
 
