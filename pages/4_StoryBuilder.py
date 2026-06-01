@@ -354,8 +354,8 @@ dashboard_json = {
 }
 
 st.download_button(
-    "⬇ Export Dashboard JSON",
-    data=str(dashboard_json),
-    file_name="dashboard.json",
-    mime="application/json"
+    "⬇ Export Dashboard PDF",
+    data=str(dashboard_pdf),
+    file_name="dashboard.pdf",
+    mime="application/pdf"
 )
