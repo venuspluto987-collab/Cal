@@ -53,3 +53,15 @@ section[data-testid="stSidebarNav"] svg{
 section[data-testid="stSidebarNav"] a[aria-current="page"] svg{
     fill:#0a6ed1 !important;
 }
+/* SAC Logo Area */
+
+[data-testid="stSidebar"]::before{
+    content:"SAP Analytics Cloud";
+    display:block;
+    font-size:18px;
+    font-weight:700;
+    color:white;
+    padding:20px;
+    border-bottom:1px solid rgba(255,255,255,0.2);
+    margin-bottom:15px;
+}
