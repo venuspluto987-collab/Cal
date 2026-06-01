@@ -2,7 +2,8 @@ from PIL import Image
 import streamlit as st
 
 def load_ui(page_title):
-    logo = Image.open("")
+    logo = Image.open("Screenshot 2026-05-28 212716.png
+")
 
     st.set_page_config(
         page_title=page_title,
