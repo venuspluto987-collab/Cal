@@ -1,164 +1,55 @@
 /* =====================================================
-   SAP ANALYTICS CLOUD STYLE
+   SAC SIDEBAR
 ===================================================== */
 
-.stApp{
-    background:#f5f6f7;
-}
-
-/* TOP HEADER */
-
-.sap-header{
-    height:60px;
-    background:#0a6ed1;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 25px;
-    margin:-1rem -1rem 1rem -1rem;
-    color:white;
-}
-
-.sap-logo{
-    font-size:22px;
-    font-weight:700;
-}
-
-.sap-toolbar{
-    display:flex;
-    gap:30px;
-    font-size:14px;
-    font-weight:500;
-}
-
-.sap-toolbar span{
-    cursor:pointer;
-}
-
-/* SIDEBAR */
-
 [data-testid="stSidebar"]{
-    background:#f5f6f7;
-    border-right:1px solid #d9d9d9;
+    background:#0a6ed1 !important;
+    border-right:none;
 }
 
 [data-testid="stSidebar"] *{
-    color:#223548 !important;
-}
-/* MAIN CANVAS */
-
-.block-container{
-    max-width:100% !important;
-    padding:1rem 2rem;
+    color:white !important;
 }
 
-/* KPI CARDS */
+/* Sidebar Navigation */
 
-[data-testid="metric-container"]{
-    background:white;
-    border-left:5px solid #0a6ed1;
-    border-radius:8px;
-    padding:15px;
-    box-shadow:0 1px 5px rgba(0,0,0,.08);
+section[data-testid="stSidebarNav"]{
+    padding-top:20px;
 }
 
-/* BUTTONS */
+/* Menu Items */
 
-.stButton button{
-    background:#0a6ed1;
-    color:white;
-    border:none;
-    border-radius:6px;
-    font-weight:600;
-    width:100%;
-}
-
-.stButton button:hover{
-    background:#0854a0;
-}
-
-/* TABLES */
-
-[data-testid="stDataFrame"]{
-    border:1px solid #d9d9d9;
-    border-radius:8px;
-    overflow:hidden;
-}
-
-/* CHARTS */
-
-.js-plotly-plot{
-    border:1px solid #d9d9d9;
-    border-radius:8px;
-    background:white;
-    padding:10px;
-}
-
-/* TITLES */
-
-h1{
-    color:#32363a;
-    font-weight:600;
-}
-
-h2,h3{
-    color:#32363a;
-}
-/* Selectboxes */
-
-div[data-baseweb="select"]{
-    background:white !important;
-    border:1px solid #d9d9d9 !important;
-    border-radius:6px !important;
-}
-
-/* File uploader */
-
-[data-testid="stFileUploader"]{
-    background:white;
-    border:1px solid #d9d9d9;
-    border-radius:8px;
-    padding:15px;
-}
-
-/* Metrics */
-
-[data-testid="metric-container"]{
-    background:white;
-    border-left:4px solid #0a6ed1;
-    border-radius:8px;
-    padding:12px;
-}
-
-/* Tables */
-
-[data-testid="stDataFrame"]{
-    background:white;
-    border-radius:8px;
-    border:1px solid #d9d9d9;
-}
-
-/* Buttons */
-
-.stButton > button{
-    background:#0a6ed1;
-    color:white;
-    border-radius:6px;
-    border:none;
-}
 section[data-testid="stSidebarNav"] a{
-    border-radius:14px;
-    padding:12px;
-    margin-bottom:8px;
-    font-size:18px;
-    font-weight:600;
+    border-radius:8px;
+    padding:12px 16px;
+    margin-bottom:6px;
+    font-size:15px;
+    font-weight:500;
+    color:white !important;
+    transition:0.2s;
 }
+
+/* Hover */
 
 section[data-testid="stSidebarNav"] a:hover{
-    background:#eef4fb;
+    background:rgba(255,255,255,0.15);
 }
 
+/* Active Page */
+
 section[data-testid="stSidebarNav"] a[aria-current="page"]{
-    background:#eef4fb;
-    border:2px solid #0a6ed1;
+    background:white !important;
+    color:#0a6ed1 !important;
+    font-weight:700;
+    border:none;
+}
+
+/* Icons */
+
+section[data-testid="stSidebarNav"] svg{
+    fill:white !important;
+}
+
+section[data-testid="stSidebarNav"] a[aria-current="page"] svg{
+    fill:#0a6ed1 !important;
 }
