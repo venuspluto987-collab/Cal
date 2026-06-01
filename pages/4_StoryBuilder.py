@@ -341,21 +341,41 @@ if len(numeric_cols) > 0:
         )
     )
 
+from fpdf import FPDF
+import tempfile
+
 # =====================================================
 # EXPORT DASHBOARD
 # =====================================================
 
 st.divider()
 
-dashboard_pdf = {
-    "story_title": story_title,
-    "layout": layout_type,
-    "widgets": selected_widgets
-}
+if st.button("Generate PDF"):
 
-st.download_button(
-    "⬇ Export Dashboard PDF",
-    data=str(dashboard_pdf),
-    file_name="dashboard.pdf",
-    mime="application/pdf"
-)
+    pdf = FPDF()
+    pdf.add_page()
+
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(0, 10, story_title, ln=True)
+
+    pdf.ln(5)
+
+    pdf.set_font("Arial", "", 12)
+
+    pdf.cell(0, 8, f"Layout: {layout_type}", ln=True)
+
+    pdf.ln(5)
+
+    pdf.cell(0, 8, "Widgets:", ln=True)
+
+    for widget in selected_widgets:
+        pdf.cell(0, 8, f"- {widget}", ln=True)
+
+    pdf_bytes = bytes(pdf.output(dest="S"))
+
+    st.download_button(
+        label="⬇ Export Dashboard PDF",
+        data=pdf_bytes,
+        file_name="dashboard.pdf",
+        mime="application/pdf"
+    )
